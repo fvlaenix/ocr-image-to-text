@@ -1,0 +1,3 @@
+[submodule "rpc"]
+	path = rpc
+	url = https://fvlaenix@bitbucket.org/fvlaenix/rpc.git
