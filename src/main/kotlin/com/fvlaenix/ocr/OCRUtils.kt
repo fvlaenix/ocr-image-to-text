@@ -16,14 +16,6 @@ data class ImageText(val blocks: List<TextBlock>) {
     }
     return rootNode
   }
-
-  fun removeIntersectingBlocks(): ImageText {
-    val newBlocks = this.blocks.filterNot { block ->
-      this.blocks.any { it != block && block.rectangle.isInside(it.rectangle) }
-    }
-
-    return ImageText(newBlocks)
-  }
 }
 
 data class TextBlock(val text: String, val rectangle: Rectangle){
@@ -36,35 +28,15 @@ data class TextBlock(val text: String, val rectangle: Rectangle){
   }
 }
 
-data class Rectangle(val points: List<Point>){
-  fun toJson(): ArrayNode {
-    val mapper = JsonMapper()
-    val node = mapper.createArrayNode()
-    points.forEach { point ->
-      val pointNode = point.toJson()
-      node.add(pointNode)
-    }
-    return node
-  }
-
-  fun isInside(other: Rectangle): Boolean {
-    val topLeft = points[0]
-    val bottomRight = points[2]
-    val otherTopLeft = other.points[0]
-    val otherBottomRight = other.points[2]
-
-    return (otherTopLeft.X <= topLeft.X && otherTopLeft.Y <= topLeft.Y
-        && otherBottomRight.X >= bottomRight.X && otherBottomRight.Y >= bottomRight.Y)
-  }
-}
-
-data class Point(val X: Int, val Y: Int){
+data class Rectangle(val x: Int, val y: Int, val width: Int, val height: Int){
   fun toJson(): ObjectNode {
-    val objectMapper = JsonMapper()
-    val pointNode = objectMapper.createObjectNode()
-    pointNode.put("x", X)
-    pointNode.put("y", Y)
-    return pointNode
+    val mapper = JsonMapper()
+    val node = mapper.createObjectNode()
+    node.put("x", x)
+    node.put("y", y)
+    node.put("width", width)
+    node.put("height", height)
+    return node
   }
 }
 
@@ -107,12 +79,11 @@ object OCRUtils {
         }.replace("\n", " ")
         val vertices = block.boundingBox.verticesList
         if (vertices.size != 4) throw IllegalStateException()
-        val rectangle = Rectangle(listOf(
-          Point(vertices[0].x, vertices[0].y),
-          Point(vertices[1].x, vertices[1].y),
-          Point(vertices[2].x, vertices[2].y),
-          Point(vertices[3].x, vertices[3].y)
-        ))
+        val x = vertices.minOf { it.x }
+        val y = vertices.minOf { it.y }
+        val width = vertices.maxOf { it.x } - x
+        val height = vertices.maxOf { it.y } - y
+        val rectangle = Rectangle(x, y, width, height)
         val textBlock = TextBlock(text, rectangle)
         textBlocks.add(textBlock)
       }
