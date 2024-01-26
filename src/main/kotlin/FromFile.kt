@@ -1,5 +1,8 @@
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fvlaenix.ocr.OCRUtils
+import com.fvlaenix.ocr.OCRUtils.patchMapper
+import com.google.gson.JsonArray
 import java.util.logging.Logger
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
@@ -13,19 +16,21 @@ fun main(args: Array<String>) {
   }
   val editsDirectory = Path(args[0])
   editsDirectory.resolve("text").createDirectories()
+  val objectMapper = ObjectMapper().patchMapper()
+  val prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter()
   val jsons = editsDirectory.resolve("untranslated").toFile().listFiles()!!
     .sortedBy { it.nameWithoutExtension.toInt() }
     .map { file ->
-      val json = OCRUtils.ocr(file)
-      val jsonString = json.toJson().toPrettyString()
+      val rectangles = OCRUtils.ocr(file)
+      val jsonString = prettyPrinter.writeValueAsString(rectangles)
       logger.info("Write ${file.nameWithoutExtension}.json")
       editsDirectory.resolve("text").resolve("${file.nameWithoutExtension}.json").writeText(jsonString)
-      Pair(file.nameWithoutExtension.toInt(), json.toJson())
+      Pair(file.nameWithoutExtension.toInt(), rectangles)
     }
     .sortedBy { it.first }
-  val o = ObjectMapper().createObjectNode()
+  val o = objectMapper.createObjectNode()
   jsons.forEach { (number, json) ->
-    o.replace(number.toString(), json)
+    o.replace(number.toString(), objectMapper.valueToTree(json))
   }
   editsDirectory.resolve("text").resolve("output.json").writeText(o.toPrettyString())
 }
