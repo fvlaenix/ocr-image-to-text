@@ -1,8 +1,6 @@
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fvlaenix.ocr.OCRUtils
 import com.fvlaenix.ocr.OCRUtils.patchMapper
-import com.google.gson.JsonArray
 import java.util.logging.Logger
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
@@ -13,6 +11,7 @@ val logger: Logger = Logger.getLogger(OCRUtils::class.java.name)
 fun main(args: Array<String>) {
   if (args.size != 1) {
     println("Usage: <path to edits>")
+    return
   }
   val editsDirectory = Path(args[0])
   editsDirectory.resolve("text").createDirectories()
@@ -21,7 +20,7 @@ fun main(args: Array<String>) {
   val jsons = editsDirectory.resolve("untranslated").toFile().listFiles()!!
     .sortedBy { it.nameWithoutExtension.toInt() }
     .map { file ->
-      val rectangles = OCRUtils.ocr(file)
+      val rectangles = OCRUtils.ocrFileToText(file)
       val jsonString = prettyPrinter.writeValueAsString(rectangles)
       logger.info("Write ${file.nameWithoutExtension}.json")
       editsDirectory.resolve("text").resolve("${file.nameWithoutExtension}.json").writeText(jsonString)
