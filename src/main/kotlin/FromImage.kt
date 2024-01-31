@@ -1,4 +1,8 @@
 import com.fvlaenix.ocr.OCRUtils
+import com.fvlaenix.ocr.protobuf.OcrRectangle
+import com.fvlaenix.ocr.protobuf.OcrRectangleKt
+import com.fvlaenix.ocr.protobuf.ocrRectangle
+import com.google.protobuf.TextFormat
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 import kotlin.io.path.writeBytes

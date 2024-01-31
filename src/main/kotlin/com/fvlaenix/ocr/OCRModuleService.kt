@@ -10,7 +10,7 @@ import kotlin.io.path.extension
 class OCRModuleService : OcrServiceGrpcKt.OcrServiceCoroutineImplBase() {
 
   override suspend fun ocrImage(request: OcrImageRequest): OcrTextResponse {
-    return OCRUtils.ocrBytesArrayToText(request.image.toByteArray())
+    return OCRUtils.ocrBytesArrayToText(request.image.content.toByteArray())
   }
 
   override suspend fun ocrUrlImage(request: OcrUrlImageRequest): OcrTextResponse {
@@ -18,7 +18,7 @@ class OCRModuleService : OcrServiceGrpcKt.OcrServiceCoroutineImplBase() {
   }
 
   override suspend fun ocrImageToImage(request: OcrImageRequest): OcrImageResponse {
-    return OCRUtils.ocrBytesArrayToImage(request.image.toByteArray(), Path(request.name).extension)
+    return OCRUtils.ocrBytesArrayToImage(request.image.content.toByteArray(), Path(request.image.fileName).extension)
   }
 
   override suspend fun ocrUrlToImage(request: OcrUrlImageRequest): OcrImageResponse {
