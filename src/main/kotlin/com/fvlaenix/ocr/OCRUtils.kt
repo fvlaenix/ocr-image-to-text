@@ -64,23 +64,23 @@ object OCRUtils {
     return ocrGoogleImageToText(Image.newBuilder().setContent(imgBytes).build())
   }
 
-  fun ocrFileToImage(file: File, extension: String): OcrImageResponse {
-    return ocrBytesArrayToImage(file.readBytes(), extension)
+  fun ocrFileToImage(file: File, name: String): OcrImageResponse {
+    return ocrBytesArrayToImage(file.readBytes(), name)
   }
 
   fun ocrFileToText(image: File): OcrTextResponse {
     return ocrBytesArrayToText(image.readBytes())
   }
 
-  fun ocrBytesArrayToImage(image: ByteArray, extension: String): OcrImageResponse {
-    return ocrGoogleImageToImage(Image.newBuilder().setContent(ByteString.copyFrom(image)).build(), extension)
+  fun ocrBytesArrayToImage(image: ByteArray, name: String): OcrImageResponse {
+    return ocrGoogleImageToImage(Image.newBuilder().setContent(ByteString.copyFrom(image)).build(), name)
   }
 
   fun ocrBytesArrayToText(image: ByteArray): OcrTextResponse {
     return ocrGoogleImageToText(Image.newBuilder().setContent(ByteString.copyFrom(image)).build())
   }
 
-  fun ocrGoogleImageToImage(googleImage: Image, extension: String): OcrImageResponse {
+  fun ocrGoogleImageToImage(googleImage: Image, name: String): OcrImageResponse {
     val responseRectangles = ocrGoogleImageToText(googleImage)
     if (responseRectangles.rectangles == null) {
       return ocrImageResponse {
@@ -115,7 +115,7 @@ object OCRUtils {
     graphics.dispose()
 
     val arrayBytesOutput = ByteArrayOutputStream()
-    ImageIO.write(bufferedImage, extension, arrayBytesOutput)
+    ImageIO.write(bufferedImage, Path(name).extension, arrayBytesOutput)
     return ocrImageResponse {
       this.result = ocrImageSuccessfulResponse {
         this.text = responseRectangles

@@ -4,8 +4,6 @@ import com.fvlaenix.alive.protobuf.IsAliveRequest
 import com.fvlaenix.alive.protobuf.IsAliveResponse
 import com.fvlaenix.alive.protobuf.isAliveResponse
 import com.fvlaenix.ocr.protobuf.*
-import kotlin.io.path.Path
-import kotlin.io.path.extension
 
 class OCRModuleService : OcrServiceGrpcKt.OcrServiceCoroutineImplBase() {
 
@@ -18,7 +16,7 @@ class OCRModuleService : OcrServiceGrpcKt.OcrServiceCoroutineImplBase() {
   }
 
   override suspend fun ocrImageToImage(request: OcrImageRequest): OcrImageResponse {
-    return OCRUtils.ocrBytesArrayToImage(request.image.content.toByteArray(), Path(request.image.fileName).extension)
+    return OCRUtils.ocrBytesArrayToImage(request.image.content.toByteArray(), request.image.fileName)
   }
 
   override suspend fun ocrUrlToImage(request: OcrUrlImageRequest): OcrImageResponse {
