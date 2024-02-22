@@ -15,7 +15,7 @@ class OCRModuleServer(port: Int) {
     )
   }
 
-  fun stop() {
+  private fun stop() {
     server.shutdown()
   }
 
