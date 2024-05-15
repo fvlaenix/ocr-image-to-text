@@ -28,7 +28,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.slf4j:slf4j-simple:2.0.9")
 
-    protobuf(files("discord-bots-rpc/image.proto","discord-bots-rpc/is-alive.proto", "discord-bots-rpc/ocr/ocr_request.proto"))
+    protobuf(files("discord-bots-rpc/image.proto","discord-bots-rpc/is-alive.proto", "discord-bots-rpc/ocr-request.proto"))
 }
 
 tasks.test {
