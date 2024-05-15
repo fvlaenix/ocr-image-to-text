@@ -39,12 +39,20 @@ class RectanglesSerializer : StdSerializer<OcrRectangles>(OcrRectangles::class.j
   }
 }
 
+class OcrTextResponseSerializer : StdSerializer<OcrTextResponse>(OcrTextResponse::class.java) {
+  override fun serialize(responce: OcrTextResponse, jsonGenerator: JsonGenerator, p2: SerializerProvider?) {
+    jsonGenerator.writeObject(responce.rectangles)
+  }
+
+}
+
 object OCRUtils {
 
   fun ObjectMapper.patchMapper(): ObjectMapper {
     val module = SimpleModule()
     module.addSerializer(OcrRectangle::class.java, RectangleSerializer())
     module.addSerializer(OcrRectangles::class.java, RectanglesSerializer())
+    module.addSerializer(OcrTextResponse::class.java, OcrTextResponseSerializer())
     this.registerModules(module)
     return this
   }

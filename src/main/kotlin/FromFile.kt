@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
   editsDirectory.resolve("text").createDirectories()
   val objectMapper = ObjectMapper().patchMapper()
   val prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter()
-  val jsons = editsDirectory.resolve("untranslated").toFile().listFiles()!!
+  val jsons = editsDirectory.resolve("subimage_untranslated").toFile().listFiles()!!
     .sortedBy { it.nameWithoutExtension.toInt() }
     .map { file ->
       val rectangles = OCRUtils.ocrFileToText(file)
