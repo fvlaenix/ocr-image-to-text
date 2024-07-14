@@ -5,7 +5,6 @@ plugins {
     kotlin("jvm") version "1.9.0"
     id("com.google.protobuf") version "0.9.4"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    application
 }
 
 group = "com.fvlaenix"
