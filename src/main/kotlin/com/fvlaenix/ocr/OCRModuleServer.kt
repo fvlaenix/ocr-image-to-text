@@ -4,7 +4,11 @@ import io.grpc.Server
 import io.grpc.ServerBuilder
 
 class OCRModuleServer(port: Int) {
-  private val server: Server = ServerBuilder.forPort(port).addService(OCRModuleService()).build()
+  private val server: Server = ServerBuilder
+    .forPort(port)
+    .addService(OCRModuleService())
+    .maxInboundMessageSize(50 * 1024 * 1024) // 50mb
+    .build()
 
   fun start() {
     server.start()
