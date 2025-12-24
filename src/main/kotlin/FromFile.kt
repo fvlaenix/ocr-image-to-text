@@ -17,14 +17,29 @@ fun main(args: Array<String>) {
   editsDirectory.resolve("text").createDirectories()
   val objectMapper = ObjectMapper().patchMapper()
   val prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter()
-  val jsons = editsDirectory.resolve("subimage_untranslated").toFile().listFiles()!!
-    .sortedBy { it.nameWithoutExtension.toInt() }
-    .map { file ->
+  val sourceDir = editsDirectory.resolve("subimage_untranslated").toFile()
+  val files = sourceDir.listFiles()
+  if (files == null) {
+    println("No files found in ${sourceDir.path}")
+    return
+  }
+  val jsons = files
+    .mapNotNull { file ->
+      val index = file.nameWithoutExtension.toIntOrNull()
+      if (index == null) {
+        logger.warning("Skipping unexpected file: ${file.name}")
+        null
+      } else {
+        index to file
+      }
+    }
+    .sortedBy { it.first }
+    .map { (index, file) ->
       val rectangles = OCRUtils.ocrFileToText(file)
       val jsonString = prettyPrinter.writeValueAsString(rectangles)
       logger.info("Write ${file.nameWithoutExtension}.json")
       editsDirectory.resolve("text").resolve("${file.nameWithoutExtension}.json").writeText(jsonString)
-      Pair(file.nameWithoutExtension.toInt(), rectangles)
+      Pair(index, rectangles)
     }
     .sortedBy { it.first }
   val o = objectMapper.createObjectNode()

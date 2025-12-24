@@ -30,6 +30,10 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9")
     
     protobuf(files("discord-bots-rpc/image.proto","discord-bots-rpc/is-alive.proto", "discord-bots-rpc/ocr-request.proto"))
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
 
 tasks.test {

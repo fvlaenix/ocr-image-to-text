@@ -7,8 +7,11 @@ import kotlin.io.path.inputStream
 val pathToCredentials = System.getenv("OCR_CREDENTIALS_PATH")?.let { Path(it) } ?: Path("credentials", "credentials.json")
 
 object CredentialsUtils {
-  fun getCredentials(): ServiceAccountCredentials {
-    return ServiceAccountCredentials
-      .fromStream(pathToCredentials.inputStream())
+  private val cachedCredentials: ServiceAccountCredentials by lazy {
+    pathToCredentials.inputStream().use { stream ->
+      ServiceAccountCredentials.fromStream(stream)
+    }
   }
+
+  fun getCredentials(): ServiceAccountCredentials = cachedCredentials
 }
