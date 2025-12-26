@@ -67,6 +67,27 @@ object OCRUtils {
     return created
   }
 
+  fun configureWithCredentialsPath(credentialsPath: String) {
+    val credentialsFile = java.io.File(credentialsPath)
+    if (!credentialsFile.exists()) {
+      throw IllegalArgumentException("Credentials file not found: $credentialsPath")
+    }
+    annotatorClientFactory = {
+      val credentials = com.google.auth.oauth2.GoogleCredentials.fromStream(credentialsFile.inputStream())
+      ImageAnnotatorClient.create(
+        ImageAnnotatorSettings.newBuilder()
+          .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+          .build()
+      )
+    }
+    cachedAnnotatorClient = null
+  }
+
+  fun resetToDefaultCredentials() {
+    annotatorClientFactory = defaultAnnotatorClientFactory
+    cachedAnnotatorClient = null
+  }
+
   internal fun setAnnotatorClientForTesting(client: ImageAnnotatorClient) {
     cachedAnnotatorClient = client
   }
